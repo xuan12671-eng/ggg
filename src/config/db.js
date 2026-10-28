@@ -1,18 +1,23 @@
-const mongoose = require("mongoose");
+﻿const mongoose = require("mongoose");
 
 const connectDB = async () => {
+  const mongoUri = process.env.MONGODB_URI;
+
+  if (!mongoUri) {
+    throw new Error("Missing MONGODB_URI in .env file");
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(mongoUri);
 
     console.log(
-      `✅ [Database] Đã kết nối MongoDB Atlas thành công: ${conn.connection.host}`
-    );
-  } catch (error) {
-    console.error(
-      `❌ [Database] Lỗi kết nối CSDL: ${error.message}`
+      `[Database] Connected to MongoDB Atlas: ${conn.connection.host}`
     );
 
-    process.exit(1);
+    return conn;
+  } catch (error) {
+    console.error("[Database] MongoDB connection failed:", error.message);
+    throw error;
   }
 };
 
