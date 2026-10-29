@@ -1,6 +1,4 @@
-
-const express = require('express');
-
+﻿const express = require("express");
 const router = express.Router();
 
 const {
@@ -8,18 +6,20 @@ const {
   getOrders,
   getOrderById,
   updateOrderStatus
-} = require('../controllers/orderController');
+} = require("../controllers/orderController");
 
-// [POST] /api/orders - Đặt hàng mới
-router.post('/', createOrder);
+const { protect, adminOnly } = require("../middlewares/authMiddleware");
 
-// [GET] /api/orders - Lấy danh sách đơn hàng
-router.get('/', getOrders);
+// Khach co the dat hang
+router.post("/", createOrder);
 
-// [GET] /api/orders/:id - Xem chi tiết đơn hàng
-router.get('/:id', getOrderById);
+// Chi admin duoc xem tat ca don hang
+router.get("/", protect, adminOnly, getOrders);
 
-// [PUT] /api/orders/:id/status - Cập nhật trạng thái đơn hàng
-router.put('/:id/status', updateOrderStatus);
+// Nguoi dung dang nhap; controller can kiem tra quyen xem don
+router.get("/:id", protect, getOrderById);
+
+// Chi admin duoc cap nhat trang thai don
+router.put("/:id/status", protect, adminOnly, updateOrderStatus);
 
 module.exports = router;
